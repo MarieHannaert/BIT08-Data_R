@@ -8,5 +8,6 @@ typeof(avlog)
 class(avchr)
 class(avint)
 class(avlog)
-mtrx <- matrix(1:12, nrow=4, ncol=3)
-
+matrixdata<-c((1:12)*2)
+mat4x3 <- matrix(matrixdata, nrow = 4, ncol=3, byrow=FALSE)
+print(mat4x3)
