@@ -1,4 +1,5 @@
 ### R environment
+setwd("Shared/BIT08-Data_R")
 # list defined variables/data in workspace
 ls()
 # remove str1
@@ -7,11 +8,12 @@ str1
 rm(str1)
 # show current working directory
 getwd()
+setwd()
 
 
 ### Library/packages
 install.packages("xlsx")
-library(xlsx)
+
 
 
 ### Bioconductor packages
