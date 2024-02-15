@@ -1,3 +1,3 @@
 size <- c("Small", "Medium", "Medium", "Large", "Large")
-size <- as.factor(size)
+size <- factor(c())
 class(size)
