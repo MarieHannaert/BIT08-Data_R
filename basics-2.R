@@ -13,7 +13,7 @@ setwd()
 
 ### Library/packages
 install.packages("xlsx")
-
+library(xlsx)
 
 
 ### Bioconductor packages
