@@ -96,9 +96,9 @@ matrixPCA <- cbind(pca$x[,1],pca$x[,2],pca$x[,3])
 pcaPlot <- plot3d(matrixPCA, 
                 main = "",
                 pch = 1, 
-                type = "s",
+                type = "p",
 # 'p' points, 's' spheres, 'l' lines, 'h' line segments
-                radius = 0.15,
+                radius = 0.,
                 xlab = "pc1", 
                 ylab = "pc2", 
                 zlab = "pc3",
@@ -119,7 +119,7 @@ library(xlsx)
 library(Rtsne)
 library(RColorBrewer)
 ## count data of 2000 genes of 2 cell types  (c and i) of 8 patients
-setwd("/home/pacoh/Dropbox/howest/BIT07-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1/")
 countData <- read.csv(file="countData2000.csv", header = TRUE)
 colnames(countData)
 countData[1:2,1:6]
@@ -145,7 +145,7 @@ text(x = countData.pca$x[,1], y = countData.pca$x[,2],
      cex = 0.8, family = "serif", font = 2)
 
 ## t-SNE
-set.seed(1)
+set.seed(4)
 tsne.out <- Rtsne(t(countData), 
                   dims = 2, initial_dims = 15, 
                   perplexity = 4)
@@ -153,7 +153,8 @@ plot(tsne.out$Y,
      pch = 21,
      main = "tSNE perplexity=5",
      cex = 0.6,
-     xlim = c(-200,200), ylim = c(-100,100))
+     #xlim = c(-200,200), ylim = c(-100,100)
+     )
 # Add labels to each data point
 text(x = tsne.out$Y[,1], y = tsne.out$Y[,2], 
      labels = colnames(countData), pos = 3, 

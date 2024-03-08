@@ -3,7 +3,7 @@
 ################################################################################
 # Working directory
 getwd()
-setwd("/media/sf_VMshare/BIT04-R")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R")
 # Packages
 
 # Iris dataset
@@ -646,3 +646,4 @@ qic(mval, show.grid = TRUE,
 
 
 ################################################################################
+

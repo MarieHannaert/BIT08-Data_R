@@ -1,0 +1,55 @@
+---
+title: "BIT07-1stRmd"
+author: "Paco Hulpiau"
+date: "January 16, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+---
+params: 
+  filename: "iris.csv"
+---
+```{r iris}
+summary(iris)
+```
+
+## Structure of the iris dataset
+
+With the str() function you get a nice overview of the structure of the data 
+in the data frame.
+
+```{r}
+str(iris)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE, fig.width=7, fig.height=8}
+par(mfrow = c(2,2), mar = c(6,6,4,4))
+hist(iris$Sepal.Length, main = "Histogram of sepal length")
+hist(iris$Sepal.Width, main = "Histogram of sepal width")
+hist(iris$Petal.Length, main = "Histogram of petal length")
+hist(iris$Petal.Width, main = "Histogram of petal width")
+# Now repeat in a loop, set x-axis labels and ylim from 0 to 35
+figures <- colnames(iris[,1:4]) # exclude column 5 (Species)
+for(figure in figures) {
+  hist(iris[,figure], main = paste0("Histogram of ",figure),
+       xlab = figure, ylim = c(0,40))
+}
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
