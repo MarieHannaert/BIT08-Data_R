@@ -1,0 +1,143 @@
+---
+title: "Project: Analyze a public dataset"
+author: "Marie Hannaert"
+date: "2024-03-15"
+output: html_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+#loading in the data
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R") #windows
+read.csv(file="algae.csv", header = TRUE)
+algae_data <- read.csv(file="algae.csv", header = TRUE)
+```
+```{r needed packages, include=True}
+#these are the packages that are needed for the script below
+pkg <- installed.packages()[, "Package"]
+if(!('RColorBrewer' %in% pkg)) { install.packages("RColorBrewer") }
+library(RColorBrewer)
+if(!('ggplot2' %in% pkg)) { install.packages("ggplot2") }
+library(ggplot2)
+if(!('highcharter' %in% pkg)) { install.packages("highcharter") }
+library(highcharter) 
+if(!('gridExtra' %in% pkg)) { install.packages("gridExtra") }
+library(gridExtra) 
+if(!('PerformanceAnalytics' %in% pkg)) { install.packages("PerformanceAnalytics") }
+library(PerformanceAnalytics)
+```
+## Introduction dataset
+This is the Erudit dataset. This dataset represents the concentration of seven different algae species in different European rivers. There is a total of 19 columns and a total of 200 rows. There is one ID column, three categorical columns and fifteen numerical columns. The numerical columns can be split in two groups, the first eight are variables that were measured from the rivers. The last seven columns are concentration measurement for each specie of algae, the species of algae are not defined. This can all be seen in the table below. 
+```{r creating table of variables, include=True}
+#create matrix with 4 columns
+tab <- matrix(rep(2, times=8), ncol=4, byrow=TRUE)
+
+#define column names and row names of matrix
+colnames(tab) <- c('A', 'B', 'C', 'D')
+rownames(tab) <- c('F', 'G')
+
+#convert matrix to table 
+tab <- as.table(tab)
+
+#view table 
+tab
+```
+
+```{r removing the NA data, include=TRUE}
+#removing NA data 
+algae_data <- na.omit(algae_data)
+#giving an overview of the structure of the dataset
+str(algae_data)
+```
+##Taking a look at the measurement of the rivers 
+To take a look at the stage of the rivers where the measurements were taken. First there are three barplots for each categorical data and these per season. Then there are eight histograms for each of the numerical measures of the river. 
+```{r barplots and histograms, include=TRUE}
+#making that the barplot are printed with three next to each other 
+par(mfrow = c(1,3))
+#selecting the needed columns out of the dataframe 
+cat_algaes <- colnames(algae_data[,2:4])
+#for loop for making barplots of the categorical columns 
+for(cat_algae in cat_algaes) {
+  cat_algae.freq <- table(algae_data[,cat_algae])
+  barplot(cat_algae.freq,
+          main = paste0("Barplot of ",cat_algae),
+          xlab = cat_algae,
+          col ="chartreuse3"
+          )}
+#making that the plots are printed besides each other in two rows of four 
+par(mfrow = c(2,4))
+#selecting the columns I need for making the histograms
+num_algaes <- colnames(algae_data[,5:12])
+#for loop to make histograms of the numerical columns, but only the measurements of the river 
+for(num_algae in num_algaes) {
+  d <- density(algae_data[,num_algae])
+  hist(algae_data[,num_algae],
+       main = paste0("Histogram of ",num_algae),
+       xlab = num_algae, 
+       freq = FALSE,
+     cex.main = 1.5, 
+     cex.lab = 1.2, 
+     col = "darkseagreen1",
+     col.lab = "springgreen4")
+  lines(d, lty = 1, lwd = 3, col = "springgreen4")
+}
+```
+##Influence of the season on the maximum pH and minimum O2 
+To take a look at the influence of the seasons on the maximum pH and the minimum O2 in the river, this is represented in the boxplots below. 
+```{r boxplots, include=TRUE}
+#creating a boxplot for mxPH per season
+plot1<-ggplot(algae_data, aes(x=season, y=mxPH, color=season)) +
+  geom_boxplot()+scale_color_manual(values=c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+
+#creating a boxplot for mnO2 per season
+plot2<-ggplot(algae_data, aes(x=season, y=mnO2, color=season)) +
+  geom_boxplot()+scale_color_manual(values=c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+grid.arrange(plot1, plot2, ncol=2)
+```
+##The influence of the algaes ont the minimum O2 
+The most difference that I see out of the boxplots is that there is a bigger difference with minimum O2 than the maximum pH. So I will take a look at the influence of the minimum O2 per season for each species of algaes. 
+```{r interactive scatterplots, include=TRUE}
+#interactive scatter plot for each algae species, about minimum O2 and colored by season
+hc1 <- algae_data %>% 
+  hchart('scatter', hcaes(x = a1, y = mnO2, group = season)) %>%
+  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+hc1
+hc2 <- algae_data %>% 
+  hchart('scatter', hcaes(x = a2, y = mnO2, group = season)) %>%
+  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+hc2
+hc3 <- algae_data %>% 
+  hchart('scatter', hcaes(x = a3, y = mnO2, group = season)) %>%
+  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+hc3
+hc4 <- algae_data %>% 
+  hchart('scatter', hcaes(x = a4, y = mnO2, group = season)) %>%
+  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+hc4
+hc5 <- algae_data %>% 
+  hchart('scatter', hcaes(x = a5, y = mnO2, group = season)) %>%
+  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+hc5
+hc6 <- algae_data %>% 
+  hchart('scatter', hcaes(x = a6, y = mnO2, group = season)) %>%
+  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+hc6
+hc7 <- algae_data %>% 
+  hchart('scatter', hcaes(x = a7, y = mnO2, group = season)) %>%
+  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+hc7
+```
+##Influence of the algeas on the other variables
+```{r paired plot, include=TRUE}
+#making a dataframe with only the columns I need
+algae.num <- algae_data[,7:19]
+#making a paired plot with the other numeric variables
+chart.Correlation(algae.num, 
+                  method = "pearson",
+                  histogram = TRUE, 
+                  pch = 16)
+```
+##Discussion 
+
+##Conclusion 
+

@@ -1,5 +1,5 @@
 ### R environment
-setwd("Shared/BIT08-Data_R")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/")
 # list defined variables/data in workspace
 ls()
 # remove str1
@@ -7,26 +7,26 @@ str1 <- "This string needn't escaped char"
 str1
 rm(str1)
 # show current working directory
-getwd()
-setwd()
+current_dir <- getwd()
+setwd(current_dir)
 
 
 ### Library/packages
-install.packages("xlsx")
+#install.packages("xlsx")
 library(xlsx)
 
 
 ### Bioconductor packages
-install.packages("BiocManager")
+#install.packages("BiocManager")
 library(BiocManager)
 # e.g. Limma package for analysis of gene expression data (microarray, RNA-Seq)
 BiocManager::install("limma")
 
 
 ### Reading data
-setwd("/media/sf_VMshare/BIT04-R")
-read.csv(file="Rdatasets/urine.csv", header = TRUE)
-urine_data <- read.csv(file="Rdatasets/urine.csv", header = TRUE)
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R")
+read.csv(file="Rdatasets-v2.1//urine.csv", header = TRUE)
+urine_data <- read.csv(file="Rdatasets-v2.1//urine.csv", header = TRUE)
 class(urine_data)
 dim(urine_data)
 colnames(urine_data)
