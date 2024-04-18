@@ -84,7 +84,7 @@ mantelhaen.test(mussel)
 ### --> Two nominal variables: manure, fertilizer
 ### --> Two-way anova
 ################################################################################
-setwd("/home/pacoh/Dropbox/howest/BIT04-R/Rdatasets3/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 corn <- read.csv("corn-dataset.csv", 
                   sep = ",", header = TRUE)
 str(corn)

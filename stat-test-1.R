@@ -103,7 +103,7 @@ confint(plant.model)
 ################################################################################
 ### Kruskall-Wallis test
 ################################################################################
-setwd("/home/pacoh/Dropbox/howest/BIT07-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 dogs <- read.csv("dogs-Cafazzo2010.csv", 
                       sep = ",", header = TRUE)
 # mean rank for males: 11.067

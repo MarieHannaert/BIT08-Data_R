@@ -58,7 +58,7 @@ plot(iris.lm)
 ################################################################################
 ### Ancova: Analysis of covariance
 ################################################################################
-setwd("/media/sf_VMshare/BIT04-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 crickets <- read.csv("crickets-dataset.csv", 
                      sep = ",", header = TRUE)
 str(crickets)
@@ -139,7 +139,7 @@ abline(I2, B, col = "red")
 ################################################################################
 ### Spearman rank correlation
 ################################################################################
-setwd("/media/sf_VMshare/BIT04-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 ## Monkeys & nematodes eggs dataset in Rdatasets3
 monkeys <- read.csv("monkey-nematode-dataset.csv", 
                     sep = ",", header = TRUE)
@@ -163,7 +163,7 @@ abline(0, 1, col="gray80", lty = 3)
 ################################################################################
 ### Multiple regression
 ################################################################################
-setwd("/media/sf_VMshare/BIT04-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 fish <- read.csv("fish-dataset.csv", 
                  sep = ",", header = TRUE)
 str(fish)
@@ -221,7 +221,7 @@ model.final$coefficients # OR coefficients(model.final)
 ################################################################################
 ### Simple logistic regression
 ################################################################################
-setwd("/media/sf_VMshare/BIT04-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 amphipod <- read.csv("amphipod-slogreg.csv", 
                       sep = ",", header = TRUE)
 # nominal (dependent): Mpi90 and Mpi100 (alleles amphipods)

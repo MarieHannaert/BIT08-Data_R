@@ -3,7 +3,7 @@
 ### --> general exercise including multiple regression and PCA
 ################################################################################
 ## Load dataset and look at structure
-setwd("/media/sf_VMshare/BIT04-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 sleep <- read.csv("sleep-in-mammals.csv", 
                   sep = ",", header = TRUE)
 str(sleep)

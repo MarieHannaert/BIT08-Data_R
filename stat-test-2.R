@@ -178,7 +178,7 @@ bartlett.test(weight~group, PlantGrowth)
 ################################################################################
 ### Two-way anova
 ################################################################################
-setwd("/home/pacoh/Dropbox/howest/BIT04-R/Rdatasets3/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 ## Enzyme activity and genotype in amphipods by sex
 # Measurement: enzyme activity of MPI
 # (mannose-6-phosphate isomerase)
@@ -217,7 +217,7 @@ anova(amphipods.model)
 ################################################################################
 ### Paired t-test
 ################################################################################
-setwd("/home/pacoh/Dropbox/howest/BIT04-R/Rdatasets3/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 feathers <- read.csv("bird-feather-dataset.csv", 
                       sep = ",", 
                      header = TRUE)
@@ -252,7 +252,7 @@ boxplot(feathers$TypicalFeather,
 ################################################################################
 ### Wilcoxon signed-rank test
 ################################################################################
-setwd("/home/pacoh/Dropbox/howest/BIT07-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 poplars <- read.csv("poplar-pollution-dataset.csv", 
                      sep = ",", header = TRUE)
 str(poplars)

@@ -1,18 +1,19 @@
 ---
-title: "Project: Analyze a public dataset"
+title: 'Project: Analyze a public dataset'
 author: "Marie Hannaert"
-date: "2024-03-15"
-output: html_document
+date: "2024-03-24"
+output:
+  html_document: default
 ---
 
 ```{r setup, include=TRUE}
-knitr::opts_chunk$set(echo = TRUE)
+#settings for the whole script
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 #loading in the data
-setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R") #windows
-read.csv(file="algae.csv", header = TRUE)
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Assignment_algae/") #windows
 algae_data <- read.csv(file="algae.csv", header = TRUE)
 ```
-```{r needed packages, include=True}
+```{r needed packages, include=TRUE}
 #these are the packages that are needed for the script below
 pkg <- installed.packages()[, "Package"]
 if(!('RColorBrewer' %in% pkg)) { install.packages("RColorBrewer") }
@@ -26,50 +27,74 @@ library(gridExtra)
 if(!('PerformanceAnalytics' %in% pkg)) { install.packages("PerformanceAnalytics") }
 library(PerformanceAnalytics)
 ```
+## Erudit dataset: Algae concentration evaluation
 ## Introduction dataset
-This is the Erudit dataset. This dataset represents the concentration of seven different algae species in different European rivers. There is a total of 19 columns and a total of 200 rows. There is one ID column, three categorical columns and fifteen numerical columns. The numerical columns can be split in two groups, the first eight are variables that were measured from the rivers. The last seven columns are concentration measurement for each specie of algae, the species of algae are not defined. This can all be seen in the table below. 
-```{r creating table of variables, include=True}
-#create matrix with 4 columns
-tab <- matrix(rep(2, times=8), ncol=4, byrow=TRUE)
+This is the Erudit dataset, representing the concentration of seven different algae species in various European rivers. The dataset aims to examine how the presence of algae influences specific variables. It contains a total of 19 columns and 200 rows, including one ID column, three categorical columns, and fifteen numerical columns. The numerical columns can be split into two groups: the first eight represent variables measured from the rivers. The last seven columns represent concentration measurements for each species of algae; however, the specific species are not defined. An important note is that the data is actually an aggregation of multiple water samples taken from the same river over a period of three months during the same season of the year. One important detail not mentioned in the metadata is the units, which are shown in the table below
+
+```{r creating table of variables, include=TRUE}
+#create matrix from the varaibales and there explanation
+#selecting all the variable names
+variables <- colnames(algae_data)
+#creating a vector with the explanation
+explanation <- c("ID column","The season when it was observed ", "The size of the river","The speed at which the water in the river is flowing", "Maximum pH value", "Minimum value of oxygen", "Average value of chloride", "Average value of nitrates", "Average value of ammonium", "Average of orthophosphate","Average of total phosphate", "Average chlorophyll", rep("algae species number", times=7) )
+tab <- matrix(explanation, ncol=1, byrow=TRUE)
 
 #define column names and row names of matrix
-colnames(tab) <- c('A', 'B', 'C', 'D')
-rownames(tab) <- c('F', 'G')
+colnames(tab) <- ("Explanation")
+rownames(tab) <- variables
 
 #convert matrix to table 
 tab <- as.table(tab)
 
-#view table 
-tab
+#making a nice table 
+knitr::kable(tab,
+caption = "Table of variables")
 ```
+The data has been prepared for further analysis. First, I removed all the NA data to avoid any issues in further analysis. Secondly, I removed the ID column since it does not provide useful information for the subsequent analysis. 
 
+Since many of the graphs involve seasons, I created a color vector to represent them. This is handy because the seasons will always have the same color in every graph, making them easy to identify.
 ```{r removing the NA data, include=TRUE}
 #removing NA data 
 algae_data <- na.omit(algae_data)
+#removing meaningless column 
+algae_data <- subset(algae_data, select = -X)
 #giving an overview of the structure of the dataset
 str(algae_data)
+#colors for seasons 
+brewer.pal(4,"Set2")
+season.col <- c("#FC8D62","#E78AC3","#66C2A5","#8DA0CB")
 ```
-##Taking a look at the measurement of the rivers 
-To take a look at the stage of the rivers where the measurements were taken. First there are three barplots for each categorical data and these per season. Then there are eight histograms for each of the numerical measures of the river. 
-```{r barplots and histograms, include=TRUE}
-#making that the barplot are printed with three next to each other 
+## Taking a look at the measurement of the rivers 
+To take a look at the stage of the rivers where the measurements were taken. First there are three bar plots for each categorical data and these per season. Then there are eight histograms for each of the numerical measures of the river. The first bar plot shows that most of the samples are taken in the winter and the least in the autumn. The other two bar plots show that most of the samples come from a medium sized river with a speed that is between medium and high.
+
+The histograms show the measurements that were taken in the river. Histogram one show the maximum pH, here you can see that there is a almost perfect normal distribution. For the second histogram, the minimum value of oxygen, shows that there is a bit of right skewness, but looks like normal distributed. The other histograms all have a large skewness to the left and are not normal distributed. 
+```{r bar plots and histograms, include=TRUE}
+#making that the bar plot are printed with three next to each other 
 par(mfrow = c(1,3))
+#bar plot with colors for every season
+season.freq <- table(algae_data[,1])
+barplot(season.freq,
+        main = paste0("bar plot of season"),
+        las=2,
+        col = season.col
+)
 #selecting the needed columns out of the dataframe 
-cat_algaes <- colnames(algae_data[,2:4])
-#for loop for making barplots of the categorical columns 
-for(cat_algae in cat_algaes) {
+cat_algae <- colnames(algae_data[,2:3])
+#for loop for making bar plots of the last two categorical columns 
+for(cat_algae in cat_algae) {
   cat_algae.freq <- table(algae_data[,cat_algae])
   barplot(cat_algae.freq,
-          main = paste0("Barplot of ",cat_algae),
-          xlab = cat_algae,
+          main = paste0("bar plot of ",cat_algae),
+          las=2,
           col ="chartreuse3"
-          )}
+  )}
+
 #making that the plots are printed besides each other in two rows of four 
 par(mfrow = c(2,4))
 #selecting the columns I need for making the histograms
-num_algaes <- colnames(algae_data[,5:12])
-#for loop to make histograms of the numerical columns, but only the measurements of the river 
-for(num_algae in num_algaes) {
+num_algae <- colnames(algae_data[,4:11])
+#for loop to make histograms and density plot of the numerical columns, but only the measurements of the river 
+for(num_algae in num_algae) {
   d <- density(algae_data[,num_algae])
   hist(algae_data[,num_algae],
        main = paste0("Histogram of ",num_algae),
@@ -82,62 +107,97 @@ for(num_algae in num_algaes) {
   lines(d, lty = 1, lwd = 3, col = "springgreen4")
 }
 ```
-##Influence of the season on the maximum pH and minimum O2 
-To take a look at the influence of the seasons on the maximum pH and the minimum O2 in the river, this is represented in the boxplots below. 
+
+## Influence of the season on the maximum pH and minimum O2 
+To take a look at the stage of the rivers where the measurements were taken, first, there are three bar plots for each categorical data, one for each season. Then, there are eight histograms for each of the numerical measures of the river, categorized by season. The first bar plot indicates that most samples were taken in winter, with the fewest in autumn. The other two bar plots demonstrate that the majority of samples were from medium-sized rivers with speeds between medium and high. 
+
+Histogram one shows the maximum pH. Here, you can see that there is an almost perfect normal distribution. The second histogram, showing the minimum value of oxygen, exhibits a slight right skewness but appears to be approximately normally distributed. The remaining histograms all display significant left skewness and are not normally distributed.
 ```{r boxplots, include=TRUE}
 #creating a boxplot for mxPH per season
 plot1<-ggplot(algae_data, aes(x=season, y=mxPH, color=season)) +
-  geom_boxplot()+scale_color_manual(values=c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  ggtitle("Influence of season on mxPH") +
+  geom_boxplot()+scale_color_manual(values=season.col)
 
 #creating a boxplot for mnO2 per season
 plot2<-ggplot(algae_data, aes(x=season, y=mnO2, color=season)) +
-  geom_boxplot()+scale_color_manual(values=c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  ggtitle("Influence of season on mnO2") +
+  geom_boxplot()+scale_color_manual(values=season.col)
 grid.arrange(plot1, plot2, ncol=2)
 ```
-##The influence of the algaes ont the minimum O2 
-The most difference that I see out of the boxplots is that there is a bigger difference with minimum O2 than the maximum pH. So I will take a look at the influence of the minimum O2 per season for each species of algaes. 
+## The influence of the algae ont the minimum O2 
+Due to the significant variation in the boxplots of minimum oxygen levels, I will compare them with the type of algae, grouped by season. Most of the minimum oxygen values lie between 4 and 12.
+
+**Scatterplot of a1**: In spring, there was the highest concentration of algae, while the lowest was observed in summer. The highest and lowest values of minimum oxygen were observed in winter. It's worth noting that the distribution of minimum oxygen levels is widest in winter. However, in general, the four seasons are comparable. Most of the minimum oxygen levels fall between 6 and 12.
+
+**Scatterplot of a2**: There is a large difference in algae concentration between autumn and the other seasons. The concentration of algae in autumn is larger than in the others. The minimum oxygen level is also higher on average in autumn than in the other seasons, indicating a decrease with an increase in algae concentration. Most of the minimum oxygen levels fall between 6 and 12.
+
+**Scatterplot of a3**: Winter and spring both exhibit higher algae concentrations than summer and autumn. The minimum oxygen levels are approximately the same as in the two previous scatterplots, with most falling between 6 and 12.
+
+**Scatterplot of a4**: Only spring shows two outliers in algae concentration, which are much higher than the other seasons. The distribution of minimum oxygen levels ranges between 4 and 14.
+
+**Scatterplot of a5**: Spring and winter have more outliers in algae concentration compared to the other seasons. The minimum oxygen levels are distributed between 4 and 12.
+
+**Scatterplot of a6**: The outliers in algae concentration are from autumn and winter. Most of the minimum oxygen levels are distributed between 6 and 12.
+
+**Scatterplot of a7**: The outliers in algae concentration are observed in all four seasons. The minimum oxygen levels are distributed between 4 and 12.
+
+When comparing these results, it appears that there is not a significant difference between the types of algae in relation to minimum oxygen levels. However, the outliers show more variation in algae concentration across seasons. From these findings, it can be concluded that the season impacts the concentration of algae, which in turn affects minimum oxygen levels.
+
 ```{r interactive scatterplots, include=TRUE}
 #interactive scatter plot for each algae species, about minimum O2 and colored by season
 hc1 <- algae_data %>% 
   hchart('scatter', hcaes(x = a1, y = mnO2, group = season)) %>%
-  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  hc_colors(season.col)
 hc1
 hc2 <- algae_data %>% 
   hchart('scatter', hcaes(x = a2, y = mnO2, group = season)) %>%
-  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  hc_colors(season.col)
 hc2
 hc3 <- algae_data %>% 
   hchart('scatter', hcaes(x = a3, y = mnO2, group = season)) %>%
-  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  hc_colors(season.col)
 hc3
 hc4 <- algae_data %>% 
   hchart('scatter', hcaes(x = a4, y = mnO2, group = season)) %>%
-  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  hc_colors(season.col)
 hc4
 hc5 <- algae_data %>% 
   hchart('scatter', hcaes(x = a5, y = mnO2, group = season)) %>%
-  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  hc_colors(season.col)
 hc5
 hc6 <- algae_data %>% 
   hchart('scatter', hcaes(x = a6, y = mnO2, group = season)) %>%
-  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  hc_colors(season.col)
 hc6
 hc7 <- algae_data %>% 
   hchart('scatter', hcaes(x = a7, y = mnO2, group = season)) %>%
-  hc_colors(c("#FB8072","#8DD3C7","#FFED6F","#80B1D3"))
+  hc_colors(season.col)
 hc7
 ```
-##Influence of the algeas on the other variables
+
+## Influence of the algae on average chlorophyll
+When examining the relationship between chlorophyll and the types of algae, only types a1 and a2 show a correlation with chlorophyll. For the other types of algae, the relationship with chlorophyll is either less pronounced or nearly non-existent.
+
+Additionally, the pairplot reveals relationships between different types of algae. The strongest relationship is observed between types a5 and a6, while type a1 exhibits the most correlations with other types of algae.
 ```{r paired plot, include=TRUE}
 #making a dataframe with only the columns I need
-algae.num <- algae_data[,7:19]
+algae.num <- algae_data[,11:18]
 #making a paired plot with the other numeric variables
 chart.Correlation(algae.num, 
                   method = "pearson",
                   histogram = TRUE, 
                   pch = 16)
 ```
-##Discussion 
 
-##Conclusion 
 
+## Discussion 
+
+First, the comparison between the samples is very difficult because these are samples from different rivers, but the rivers are not mentioned. You have a couple of parameters that you can use to determine the river, like same speed and same size, but then there could be multiple rivers with the same combination in speed and size.
+
+The second thing is that nowhere are the units mentioned in the metadata or description. For example, the minimum oxygen level could suggest that it is in parts per million (ppm), but you cannot be sure.
+
+All of my conclusions are based on the visualizations and are more like assumptions.
+
+## Conclusion 
+
+The greatest influence on the river, especially regarding minimum oxygen and average chlorophyll, comes from algae types a1 and a2. Additionally, algae type a1 has the most influence on the other algae types.

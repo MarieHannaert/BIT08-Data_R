@@ -24,7 +24,7 @@ fisher.test(tpatients)
 ################################################################################
 ### Exercise 6.2: 
 ################################################################################
-setwd("/home/pacoh/Dropbox/howest/BIT07-R/Rdatasets/")
+setwd("C:/Users/11901250/Documents/SF/BIT08-Data_R/Rdatasets-v2.1")
 ## Pigs weights after 10 months diet
 pigs <- read.csv("pigs-diets-weight.csv", 
                   sep = ",", header = TRUE)
